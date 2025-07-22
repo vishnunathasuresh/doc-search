@@ -1,10 +1,12 @@
 {
-  "name": "vue-doc",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "../run/dev.bat",
+    "app-build": "../run/build.bat",
+    "web-dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
