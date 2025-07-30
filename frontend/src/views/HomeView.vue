@@ -3,8 +3,8 @@
     <h2 class="text-3xl font-bold p-4">
       Disease Tracker
     </h2>
-    <Button class="m-4" @click="$router.push('/repo')">
-      Repo
+    <Button class="m-4" @click="$router.push('/repo')" variant="link">
+      <Icon icon="mdi:folder" class="ml-2" /> Repository
     </Button>
   </header>
   <main class="flex h-[90vh] m-2" v-if="!isFetchingUsers && !isErrorUsers">
@@ -12,7 +12,7 @@
     <Card class="w-1/4 min-w-[200px] h-full">
       <CardContent class="flex flex-col items-stretch justify-evenly p-3 gap-5">
         <Input placeholder="Search patient by name" v-model="searchTerm"/>
-        <AddUserDialog />
+        <UserDialog :dialog-type="'add'"/>
         <p class="text-lg font-bold">Previous Patients</p>
 
         <div class="flex-2 flex flex-col">
@@ -66,7 +66,7 @@
         <div class="flex items-center justify-between mt-2">
           <Input placeholder="Search history" v-model="searchHistoryTerm" class="w-1/2"/>
           <Button @click="$router.push('/new-record')">Add record<Icon icon="radix-icons:plus-circled"/></Button>
-          <Button>Update User</Button>
+          <UserDialog :dialog-type="'update'" :id="userStore.id" />
           <Button variant="destructive">Delete User</Button>
         </div>
         <p class="text-lg font-semibold mb-2">Patient History</p>
@@ -94,24 +94,19 @@ import { Input } from "@/components/ui/input";
 import { Icon } from "@iconify/vue";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-
-
-// Stores
 import { useUserStore } from "@/stores/UserStore.ts";
 import { useUsersStore } from "@/stores/UsersStore.ts";
 import History from "@/components/home/History.vue";
-import AddUserDialog from "@/components/home/AddUserDialog.vue";
+import UserDialog from "@/components/home/UserDialog.vue";
 import { useHistoryStore } from "@/stores/HistoryStore";
 
-// Store instances
 const userStore = useUserStore();
 const usersStore = useUsersStore();
 
-// State
 const searchTerm = ref("");
 const searchHistoryTerm = ref("");
 const filteredUsers = computed(() => usersStore.getSearchedUsers(searchTerm.value));
-// Fetch users using useQuery
+
 const { isFetching:isFetchingUsers, isError:isErrorUsers} = useQuery({
   queryKey: ["users"],
   queryFn: async ()=> {
@@ -129,12 +124,10 @@ const { isError:isErrorHistory, isFetching:isFetchingHistory, refetch: refetchHi
     return historyStore.history;
   },
   enabled: userStore.id !== 0,
-  gcTime: 0, // Disable garbage collection
-  staleTime: 0 // Disable stale time
+  gcTime: 0,
+  staleTime: 0
 });
 
-
-// Methods
 const dobToAge = (dob: string): string => {
   const birthDate = new Date(dob);
   const today = new Date();

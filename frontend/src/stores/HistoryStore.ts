@@ -49,6 +49,7 @@ export const useHistoryStore = defineStore('history', {
                 }));
             }
             try {
+                if (id === 0) return;
                 const result1 = await SQL.execute(`
                     select user_id as uid, id as h_id, record_date as date, record_time as time
                     from history where user_id = ? 

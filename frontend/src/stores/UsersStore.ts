@@ -98,7 +98,7 @@ export const useUsersStore = defineStore('users', {
         async fetchUsersFromDatabase() {
             try {
                 const result = await SQL.execute(`
-                select id, name, gender, dob, address, phone from users;
+                select id, name, gender, dob, address, phone from users order by id desc;
                 `);
                 if (result.status === "success") {
                     // Transform the sample data to match the user interface

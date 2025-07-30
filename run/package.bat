@@ -1,7 +1,7 @@
 @echo off
 cd ..
 echo ===================================================================
-echo                       🔧 Package to EXE
+echo                       Package to EXE
 echo        (Building Vue frontend, then packaging with PyInstaller)
 echo ===================================================================
 
@@ -10,7 +10,7 @@ cd frontend
 echo Building frontend...
 call npm run build
 if errorlevel 1 (
-    echo ❌ Vue build failed.
+    echo Vue build failed...
     exit /b 1
 )
 cd ..
@@ -23,5 +23,5 @@ call pyinstaller --onefile --noconsole ^
   main.py
 
 REM Done
-echo ✅ Build complete! EXE is in /dist folder.
+echo Build complete! EXE is in /dist folder.
 pause
