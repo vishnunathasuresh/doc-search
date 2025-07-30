@@ -67,7 +67,7 @@
           <Input placeholder="Search history" v-model="searchHistoryTerm" class="w-1/2"/>
           <Button @click="$router.push('/new-record')">Add record<Icon icon="radix-icons:plus-circled"/></Button>
           <UserDialog :dialog-type="'update'" :id="userStore.id" />
-          <Button variant="destructive">Delete User</Button>
+          <Button variant="destructive" @click="deleteUser">Delete User</Button>
         </div>
         <p class="text-lg font-semibold mb-2">Patient History</p>
 
@@ -164,6 +164,17 @@ const selectUser = (user: any) => {
   console.log("Selected user:", userStore.getUser.id);
   refetchHistory(); // Refetch history when a user is selected
   searchHistoryTerm.value = ""; // Reset search term for history
+  searchTerm.value = ""; // Reset search term for users
+};
+
+const deleteUser = async () => {
+  if (confirm("\n\nAre you sure you want to delete this user?\n This action cannot be undone.")) {
+    await usersStore.deleteUser(userStore.id);
+    userStore.clearUser(); // Clear user store after deletion
+    console.log("User deleted:", userStore.id);
+    userStore.setUser(usersStore.getUsers[0] || { id: 0, name: "", phone: "", gender: "", address: "", dob: "" });
+    refetchHistory(); // Refetch history after deletion
+  }
 };
 
 </script>

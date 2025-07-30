@@ -12,12 +12,12 @@
             </DialogDescription>
         </DialogHeader>
         <div class="flex flex-col gap-2">
-            <Input placeholder="Name" required v-model="name" />
-            <Input placeholder="Date of Birth" type="date" v-model="dateOfBirth" required />
-            <Input placeholder="Phone" type="tel" required v-model="phone" />
-            <Input placeholder="Address" default-value="" v-model="address" />
+            <Input placeholder="Name" required v-model="form.name" />
+            <Input placeholder="Date of Birth" type="date" v-model="form.dob" required />
+            <Input placeholder="Phone" type="tel" required v-model="form.phone" />
+            <Input placeholder="Address" default-value="" v-model="form.address" />
             <Label for="gender">Gender</Label>
-            <Tabs v-model="gender" class="mb-2" id="gender">
+            <Tabs v-model="form.gender" class="mb-2" id="gender">
               <TabsList>
                 <TabsTrigger value="male">Male</TabsTrigger>
                 <TabsTrigger value="female">Female</TabsTrigger>
@@ -52,7 +52,7 @@ const { dialogType, id } = defineProps({
   }
 })
 
-import { ref } from 'vue';
+import { reactive } from 'vue';
 import { Button } from '../ui/button';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '../ui/dialog';
 import { Input } from '../ui/input';
@@ -65,49 +65,38 @@ const userStore = useUserStore();
 const usersStore = useUsersStore();
 
 
-const name = ref('');
-const dateOfBirth = ref('');
-const address = ref('');
-const phone = ref('');
-const gender = ref("male");
+const form = reactive({
+  name: '',
+  dob: '',
+  address: '',
+  phone: '',
+  gender: 'male'
+});
+
 if (dialogType === 'update') {
   const user = usersStore.getUserById(id);
   if (user) {
-    name.value = user.name;
-    dateOfBirth.value = user.dob;
-    address.value = user.address;
-    phone.value = user.phone;
-    gender.value = user.gender;
+    form.name = user.name;
+    form.dob = user.dob;
+    form.address = user.address;
+    form.phone = user.phone;
+    form.gender = user.gender;
   }
 }
 
+
 const handleSubmit = () => {
   if (dialogType === 'add') {
-    const newUser = {
-      name: name.value,
-      dob: dateOfBirth.value,
-      address: address.value,
-      phone: phone.value,
-      gender: gender.value
-    };
-    usersStore.addUser(newUser);
+    usersStore.addUser({ ...form });
+    form.name = '';
+    form.dob = '';
+    form.address = '';
+    form.phone = '';
+    form.gender = 'male';
+
   } else {
-    usersStore.updateUser({
-      id: id,
-      name: name.value,
-      dob: dateOfBirth.value,
-      address: address.value,
-      phone: phone.value,
-      gender: gender.value
-    });
-    userStore.setUser({
-      id: id,
-      name: name.value,
-      dob: dateOfBirth.value,
-      address: address.value,
-      phone: phone.value,
-      gender: gender.value
-    });
+    usersStore.updateUser({ id, ...form });
+    userStore.setUser({ id, ...form });
   }
 }
 

@@ -50,14 +50,14 @@ export const useUsersStore = defineStore('users', {
                     throw new Error("Failed to fetch user ID: " + result2.message);
                 }
                 const userId:number = result2.rows[0].id;
-                this.users.push({
+                this.users = [{
                     id:userId,
                     name:user.name,
                     phone: user.phone,
                     gender: user.gender,
                     address: user.address,
                     dob: user.dob.toString()
-                });
+                }, ...this.users];
             } catch (error) {
                 console.error("Error adding user:", error);
             }
