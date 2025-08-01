@@ -8,6 +8,7 @@ DB_PATH = Path(os.getenv("LOCALAPPDATA")) / "DocSearch" / DB_NAME
 
 class API:
     def execute(self, query, args=None):
+
         try:
             conn = sql.connect(DB_PATH)
             cursor = conn.cursor()

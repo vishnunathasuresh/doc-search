@@ -1,6 +1,8 @@
 import {defineStore} from "pinia";
 import type {Observation} from "@/types/global";
 
+const sql = window.pywebview.api;
+
 export const useObservationStore = defineStore('observation', {
     state: () => ({
         userId: 0,
@@ -9,8 +11,6 @@ export const useObservationStore = defineStore('observation', {
     }),
     getters: {
         getUserId: (state) => state.userId,
-        getObservations: (state) => state.observations,
-        getUserObservations: (state) => state.userObservations,
     },
     actions: {
         setUserId(id: number) {
@@ -28,19 +28,36 @@ export const useObservationStore = defineStore('observation', {
         addUserObservation(observation: Observation) {
             this.observations.push(observation);
         },
-
         addObservation(observation: Observation) {
             this.observations.push(observation);
         },
 
-        async getObservationsFromDatabase(){
-            // This function should fetch observations from the database
-            // for now, it returns a static array
-            return [
-                {id: 1, observation: 'Fever', type: 'Symptom', disease_id: '1', disease: 'Flu', selected: false},
-                {id: 2, observation: 'Cough', type: 'Symptom', disease_id: '1', disease: 'Flu', selected: false},
-                {id: 3, observation: 'Headache', type: 'Symptom', disease_id: '2', disease: 'Migraine', selected: false},
-            ];
+        async fetchObservationsFromDatabase() {
+            try {
+                const observations = await sql.execute(
+                    `SELECT o.id,
+                            o.observation as observation,
+                            o.observation_type AS type,
+                            o.disease_id       AS disease_id,
+                            d.name            AS disease
+                     FROM observations o
+                     JOIN diseases d ON o.disease_id = d.id`, []
+                )
+                if (observations.status !== "success") {
+                    throw new Error("Failed to fetch observations: " + observations.message);
+                }
+                this.observations = observations.rows.map((row: any) => ({
+                    id: row.id,
+                    observation: row.observation,
+                    type: row.type,
+                    disease_id: row.disease_id,
+                    disease: row.disease,
+                    selected: false
+                }));
+
+            } catch (error) {
+                console.error("Failed to fetch observations from database:", error);
+            }
         },
 
         async pushObservationToDatabase(observation: Observation) {

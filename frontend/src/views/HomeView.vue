@@ -24,16 +24,17 @@
               <p>Error loading users.</p>
             </div>
             <div v-if="!isFetchingUsers && !isErrorUsers" class="space-y-2">
-              <Card v-for="user in filteredUsers" :key="user.id" class="p-2">
-                <CardContent class="p-0" @click="selectUser(user)">
+              <Card v-for="user in filteredUsers" :key="user.id" class="p-2" @click="selectUser(user)">
+                <CardContent class="p-0" >
                   <div class="flex items-center justify-between m-0.5">
                     <p class="text-lg font-semibold leading-none">{{ user.name }}</p>
-                    <Badge>{{ user.gender }}</Badge>
+                    <Badge>{{ user.gender }}</Badge> 
                   </div>
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between" v-if ="user.id !== userStore.id">
                     <p class="text-sm font-medium text-gray-500 leading-none">{{ dobToAge(user.dob) }}</p>
                     <Badge variant="outline">{{ user.phone }}</Badge>
                   </div>
+                  <Icon v-else icon="mdi:account" class="size-5 text-gray-500" />
                 </CardContent>
               </Card>
             </div>
@@ -173,7 +174,7 @@ const deleteUser = async () => {
     userStore.clearUser(); // Clear user store after deletion
     console.log("User deleted:", userStore.id);
     userStore.setUser(usersStore.getUsers[0] || { id: 0, name: "", phone: "", gender: "", address: "", dob: "" });
-    refetchHistory(); // Refetch history after deletion
+    await refetchHistory(); // Refetch history after deletion
   }
 };
 

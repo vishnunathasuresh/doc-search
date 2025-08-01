@@ -3,6 +3,8 @@ import type {history_record, Observation} from "@/types/global";
 
 const SQL = window.pywebview.api;
 
+
+
 export const useHistoryStore = defineStore('history', {
     state: () => ({
         userId: 0,
@@ -15,7 +17,7 @@ export const useHistoryStore = defineStore('history', {
     actions: {
         getStringDate(date: Date): string {
             // Converts a Date object to a string in the format dd MMM YYYY (e.g., 12 Oct 2024)
-            const d = new Date(date);
+            const d = date;
             const day = d.getDate().toString().padStart(2, '0');
             const month = d.toLocaleString('en-US', { month: 'short' });
             const year = d.getFullYear();
@@ -73,8 +75,70 @@ export const useHistoryStore = defineStore('history', {
                 alert("Error fetching history:");
             }
         },
+
+        async addRecord(record: history_record) {
+            const today = record.date;
+            today.setDate(today.getDate() + 1);
+            const date= today.toISOString().split('T')[0]
+            const time = record.time;
+
+            try {
+                const result = await SQL.execute(`
+                    insert into history (user_id, record_date, record_time) values (?, ?, ?);
+                `, [record.uid, date, time]);
+
+                const result2= await SQL.execute(`
+                    select id as h_id from history where user_id = ? and record_date = ? and record_time = ?;
+                `, [record.uid, date, time]);
+
+
+                if (result.status !== "success" || result2.status !== "success" || result2.rows.length === 0) {
+                    throw new Error("Failed to add record: " + result.message);
+                }
+
+                const h_id: number = result2.rows[0]?.h_id;
+
+                for (const obs of record.observations) {
+                    await SQL.execute(`
+                        insert into history_observations (history_id, observation_id) values (?, ?);
+                    `, [h_id, obs.id]);
+                }
+
+                this.history.push({
+                    ...record,
+                    h_id: h_id
+                });
+            } catch (error) {
+                console.error("Error adding record:", error);
+                alert("Error adding record:");
+            }
+        },
+
         async deleteRecord(h_id: number) {
-            this.history = this.history.filter(record => record.h_id !== h_id);
+
+            try {
+                const result1 = await SQL.execute(
+                    `DELETE FROM history_observations WHERE history_id = ?;`,
+                    [h_id]
+                );
+
+                const result2 = await SQL.execute(
+                    `DELETE FROM history WHERE id = ?;`,
+                    [h_id]
+                );
+
+                if (result1.status !== "success" || result2.status !== "success") {
+                    throw new Error("Failed to delete record: " + (result1.message || result2.message));
+                }
+
+                console.log("Record deleted successfully");
+                this.history = this.history.filter(record => record.h_id !== h_id);
+            } catch (error) {
+                console.error("Error deleting record:", error);
+                alert("Error deleting record");
+            }
+
+
         }
     }
 });

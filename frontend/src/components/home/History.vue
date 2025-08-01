@@ -16,7 +16,7 @@
             </li>
           </ul>
         </div>
-        <Button @click="()=>historyStore.deleteRecord(record.h_id)" variant="destructive" class="mt-2">
+        <Button @click="async ()=>await historyStore.deleteRecord(record.h_id)" variant="destructive" class="mt-2">
           Delete Record
           <Icon icon="radix-icons:trash" />
         </Button>
