@@ -23,6 +23,8 @@ frontend/*.ntvs*
 frontend/*.njsproj
 frontend/*.sln
 
+web
+
 build
 dist
 *.egg-info
