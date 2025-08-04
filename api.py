@@ -2,9 +2,12 @@ import os
 from pathlib import Path
 import sqlite3 as sql
 
-DB_NAME = "test.db"
+
+
+DB_NAME = "final.db"
 os.makedirs(Path(os.getenv("LOCALAPPDATA")) / "DocSearch", exist_ok=True)
 DB_PATH = Path(os.getenv("LOCALAPPDATA")) / "DocSearch" / DB_NAME
+
 
 class API:
     def execute(self, query, args=None):

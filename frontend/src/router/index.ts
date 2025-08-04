@@ -23,12 +23,7 @@ const router = createRouter({
             path: '/new-record',
             name: 'find-disease',
             component: () => import('@/views/FindDiseaseView.vue'),
-        },
-        {
-            path: '/confirm',
-            name: 'confirm',
-            component: () => import('@/views/ConfirmView.vue'),
-        },
+        }
     ],
 })
 

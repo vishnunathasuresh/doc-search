@@ -155,14 +155,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-
-interface Observation {
-  id: number;
-  observation: string;
-  type: string;
-  disease_id: number;
-  disease: string;
-}
+import type { Observation } from '@/types/global';
 
 interface Disease {
   id: number;
@@ -175,10 +168,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'add-disease', disease: { name: string }): void;
-  (e: 'add-observation', observation: { observation: string; type: string; disease_id: number }): void;
-  (e: 'edit-observation', observation: Observation): Promise<void>;
-  (e: 'delete-observation', id: number): void;
+  'add-disease': [disease: { name: string }];
+  'add-observation': [observation: { observation: string; type: string; disease_id: number }];
+  'edit-observation': [observation: Observation];
+  'delete-observation': [id: number];
 }>();
 
 const containerRef = ref<HTMLElement>();
@@ -199,7 +192,7 @@ const showEditDialog = ref(false);
 // Form data
 const newDisease = ref({ name: '' });
 const newObservation = ref({ observation: '', type: '', disease_id: 0 });
-const editingObservation = ref<Observation>({ id: 0, observation: '', type: '', disease_id: 0, disease: '' });
+const editingObservation = ref<Observation>({ id: 0, observation: '', type: '', disease_id: 0, disease: '', selected: false });
 
 // Filtered data
 const filteredData = computed(() => {
@@ -301,7 +294,7 @@ function closeAddObservationDialog() {
 
 function closeEditDialog() {
   showEditDialog.value = false;
-  editingObservation.value = { id: 0, observation: '', type: '', disease_id: 0, disease: '' };
+  editingObservation.value = { id: 0, observation: '', type: '', disease_id: 0, disease: '', selected: false };
 }
 
 function handleScroll(event: Event) {

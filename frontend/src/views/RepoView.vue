@@ -66,7 +66,7 @@ async function loadData() {
       SELECT o.id, o.observation, o.observation_type as type, o.disease_id, d.name as disease
       FROM observations o
       JOIN diseases d ON o.disease_id = d.id
-      ORDER BY  o.observation_type, o.observation, d.name
+      ORDER BY o.observation_type, o.observation, d.name
     `, []);
 
     if (observationsResult.status !== 'success') {
