@@ -21,9 +21,7 @@ export const useUsersStore = defineStore('users', {
             const term = searchTerm.toLowerCase();
             return state.users.filter(user =>
                 user.name.toLowerCase().includes(term) ||
-                user.phone.includes(searchTerm) ||
-                user.address.toLowerCase().includes(term) ||
-                user.gender.toLowerCase().includes(searchTerm)
+                user.id.toString().includes(term)
             );
         }
     },

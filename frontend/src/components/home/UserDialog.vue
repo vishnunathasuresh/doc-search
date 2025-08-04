@@ -13,7 +13,7 @@
         </DialogHeader>
         <div class="flex flex-col gap-2">
             <Input placeholder="Name" required v-model="form.name" />
-            <Input placeholder="Date of Birth" type="date" v-model="form.dob" required />
+            <Input placeholder="Date of Birth" type="date" v-model="form.dob" required/>
             <Input placeholder="Phone" type="tel" required v-model="form.phone" />
             <Input placeholder="Address" default-value="" v-model="form.address" />
             <Label for="gender">Gender</Label>
@@ -28,11 +28,11 @@
         </div>
           <DialogFooter>
             <DialogClose as-child>
-              <Button type="submit" @click="handleSubmit">Submit</Button>
+              <Button type="submit" @click="handleSubmit" :disabled="!form.name || !form.dob">Submit</Button>
             </DialogClose>
             
             <DialogClose as-child>
-              <Button type="button" variant="secondary">
+              <Button type="button" variant="secondary" @click="clearUserForm">
                 Close
               </Button>
             </DialogClose>
@@ -65,6 +65,7 @@ const userStore = useUserStore();
 const usersStore = useUsersStore();
 
 
+
 const form = reactive({
   name: '',
   dob: '',
@@ -72,6 +73,14 @@ const form = reactive({
   phone: '',
   gender: 'male'
 });
+
+const clearUserForm = () => {
+  form.name = '';
+  form.dob = '';
+  form.address = '';
+  form.phone = '';
+  form.gender = 'male';
+}
 
 if (dialogType === 'update') {
   const user = usersStore.getUserById(id);
@@ -98,6 +107,7 @@ const handleSubmit = () => {
     usersStore.updateUser({ id, ...form });
     userStore.setUser({ id, ...form });
   }
+  clearUserForm();
 }
 
 </script>

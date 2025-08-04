@@ -32,7 +32,7 @@
                   </div>
                   <div class="flex items-center justify-between" v-if ="user.id !== userStore.id">
                     <p class="text-sm font-medium text-gray-500 leading-none">{{ dobToAge(user.dob) }}</p>
-                    <Badge variant="outline">{{ user.phone }}</Badge>
+                    <Badge variant="outline">{{ user.id }}</Badge>
                   </div>
                   <Icon v-else icon="mdi:account" class="size-5 text-gray-500" />
                 </CardContent>
