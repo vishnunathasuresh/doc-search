@@ -18,6 +18,5 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-echo Database file copied from %SOURCE_DB% to %DEST_DB%.
 echo Database file copied successfully to %DEST_DB%.
 exit /b 0
